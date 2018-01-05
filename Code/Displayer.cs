@@ -30,6 +30,7 @@ public class Displayer : MonoBehaviour {
 		trans_targetBuilding = targetBuilding.GetBuildingObject ();				// 获取建筑模型
 		DisplayBuilding(attr,trans_targetBuilding,trans_imageTarget);			// 显示建筑模型
 		UICenter.Instance.MapToggleButtonAppear ();	// 显示小地图[显示/隐藏]按钮
+		UICenter.Instance.NaviButtonAppear();		// 显示导航按钮
 		UICenter.Instance.MusicPanelAppear();		// 显示播放器按钮
 		MusicPlayer.Insatance.SetAudioClip(targetBuilding.mIntroduceClip);	// 设置音乐
 	}
@@ -93,6 +94,7 @@ public class Displayer : MonoBehaviour {
 				BuildingList.Instance.ReleaseObject ();		// 释放当前建筑
 				UICenter.Instance.MapToogleButtonDisappear ();	//按钮隐藏
 				UICenter.Instance.MapDisappear ();	//地图隐藏
+				UICenter.Instance.NaviButtonDisappear();	//导航按钮隐藏
 				UICenter.Instance.MusicPanelDisappear();	//播放器按钮隐藏
 
 			}

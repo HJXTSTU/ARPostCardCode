@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using AssemblyCSharp;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -30,5 +31,11 @@ public class UIButtonCommand : MonoBehaviour {
 
 	public void OnExitButtonClick(){
 		Application.Quit ();
+	}
+
+
+	public void OnNaviButtonCommand(){
+		BuildingInfo info = BuildingList.Instance.GetCurrentBuildingBuilding ().GetBuildingInfo();
+		MapsUtil.PlanWalkRouteInAndroid (info);
 	}
 }

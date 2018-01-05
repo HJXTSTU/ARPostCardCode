@@ -58,7 +58,6 @@ public class BuildingList : MonoBehaviour {
 	private void Unload(){
 		if (curPrefab != null && curObject != null) {
 			DestroyImmediate (curObject);
-			//DestroyImmediate (curPrefab);
 			curObject = null;
 			curPrefab = null;
 			Resources.UnloadUnusedAssets ();

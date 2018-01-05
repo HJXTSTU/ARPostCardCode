@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public struct BuildingInfo{
+	public double lat;		// 经度
+	public double lon;		// 纬度
+	public string name;		// 地名
+}
+
 public class Building : MonoBehaviour {
 
 	private BuildingDisplayAttribute displayAttr;
@@ -12,6 +18,18 @@ public class Building : MonoBehaviour {
 		return mBuilding;
 	}
 
+
+	public double lat;
+	public double lon;
+	public string name;
+
+	public BuildingInfo GetBuildingInfo(){
+		BuildingInfo mPosition=new BuildingInfo();
+		mPosition.lat = lat;
+		mPosition.lon = lon;
+		mPosition.name = name;
+		return mPosition;
+	}
 
 	public void Initialize(){
 		Transform building = transform.GetChild(0);
