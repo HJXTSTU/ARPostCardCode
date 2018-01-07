@@ -23,16 +23,26 @@ public class Displayer : MonoBehaviour {
 	public void OnTrackableFound(Transform trans,int index){
 		trans_imageTarget = trans;
 		targetIndex = index;
-		BuildingList.Instance.LoadBuilding (index);
-		targetBuilding =BuildingList.Instance.GetCurrentBuildingBuilding ();
+		BuildingList.Instance.LoadBuildingAsync (index, new System.Action (delegate {
+			targetBuilding =BuildingList.Instance.GetCurrentBuildingBuilding ();
+			BuildingDisplayAttribute attr = targetBuilding.GetDisplayAttr ();		// 获取建筑显示参数
+			trans_targetBuilding = targetBuilding.GetBuildingObject ();				// 获取建筑模型
+			DisplayBuilding(attr,trans_targetBuilding,trans_imageTarget);			// 显示建筑模型
+			UICenter.Instance.MapToggleButtonAppear ();	// 显示小地图[显示/隐藏]按钮
+			UICenter.Instance.NaviButtonAppear();		// 显示导航按钮
+			UICenter.Instance.MusicPanelAppear();		// 显示播放器按钮
+			MusicPlayer.Insatance.SetAudioClip(targetBuilding.mIntroduceClip);	// 设置音乐
+		}));
+		//BuildingList.Instance.LoadBuilding (index);
 
-		BuildingDisplayAttribute attr = targetBuilding.GetDisplayAttr ();		// 获取建筑显示参数
-		trans_targetBuilding = targetBuilding.GetBuildingObject ();				// 获取建筑模型
-		DisplayBuilding(attr,trans_targetBuilding,trans_imageTarget);			// 显示建筑模型
-		UICenter.Instance.MapToggleButtonAppear ();	// 显示小地图[显示/隐藏]按钮
-		UICenter.Instance.NaviButtonAppear();		// 显示导航按钮
-		UICenter.Instance.MusicPanelAppear();		// 显示播放器按钮
-		MusicPlayer.Insatance.SetAudioClip(targetBuilding.mIntroduceClip);	// 设置音乐
+
+//		BuildingDisplayAttribute attr = targetBuilding.GetDisplayAttr ();		// 获取建筑显示参数
+//		trans_targetBuilding = targetBuilding.GetBuildingObject ();				// 获取建筑模型
+//		DisplayBuilding(attr,trans_targetBuilding,trans_imageTarget);			// 显示建筑模型
+//		UICenter.Instance.MapToggleButtonAppear ();	// 显示小地图[显示/隐藏]按钮
+//		UICenter.Instance.NaviButtonAppear();		// 显示导航按钮
+//		UICenter.Instance.MusicPanelAppear();		// 显示播放器按钮
+//		MusicPlayer.Insatance.SetAudioClip(targetBuilding.mIntroduceClip);	// 设置音乐
 	}
 
 	private void DisplayBuilding(BuildingDisplayAttribute attr,Transform targetBuildingModal,Transform imageTarget){
@@ -83,7 +93,10 @@ public class Displayer : MonoBehaviour {
 	}
 
 	public void OnTrackableLost(Transform trans){
-		if (trans_imageTarget != null && targetBuilding != null && trans_targetBuilding!=null) {
+		if (BuildingList.Instance.State == LoadingState.Loading) {
+			BuildingList.Instance.StopLoadingBuilding ();
+		}
+		else if (trans_imageTarget != null && targetBuilding != null && trans_targetBuilding!=null) {
 			if (trans_targetBuilding.gameObject.activeInHierarchy) {
 				HideBuilding (trans_targetBuilding, targetBuilding.transform);
 				trans_imageTarget = null;
@@ -107,20 +120,41 @@ public class Displayer : MonoBehaviour {
 			trans_targetBuilding.SetParent (targetBuilding.transform);
 			trans_targetBuilding.gameObject.SetActive (false);
 			BuildingList.Instance.ReleaseObject ();
-			BuildingList.Instance.LoadBuilding (index);
-			MusicPlayer.Insatance.ClearAudioClip ();
-			Building newBuilding = BuildingList.Instance.GetCurrentBuildingBuilding ();
-			if (newBuilding) {
-				Transform newBuildingModal = newBuilding.GetBuildingObject ();
-				BuildingDisplayAttribute newAttr = newBuilding.GetDisplayAttr ();
-				targetBuilding = newBuilding;
-				trans_targetBuilding = newBuildingModal;
-				DisplayBuilding (newAttr, trans_targetBuilding, trans_imageTarget);
-				MusicPlayer.Insatance.SetAudioClip (targetBuilding.mIntroduceClip);
-				UICenter.Instance.ResetMusicButtonState ();
-			} else {
-				Debug.LogError ("Here is building on index :" + index);
-			}
+
+			BuildingList.Instance.LoadBuildingAsync (index, new System.Action (delegate {
+				MusicPlayer.Insatance.ClearAudioClip ();
+				Building newBuilding = BuildingList.Instance.GetCurrentBuildingBuilding ();
+				if (newBuilding) {
+					Transform newBuildingModal = newBuilding.GetBuildingObject ();
+					BuildingDisplayAttribute newAttr = newBuilding.GetDisplayAttr ();
+					targetBuilding = newBuilding;
+					trans_targetBuilding = newBuildingModal;
+					DisplayBuilding (newAttr, trans_targetBuilding, trans_imageTarget);
+					MusicPlayer.Insatance.SetAudioClip (targetBuilding.mIntroduceClip);
+					UICenter.Instance.ResetMusicButtonState ();
+				} else {
+					Debug.LogError ("Here is building on index :" + index);
+				}
+			}));
+			//BuildingList.Instance.LoadBuilding (index);
+//			MusicPlayer.Insatance.ClearAudioClip ();
+//			Building newBuilding = BuildingList.Instance.GetCurrentBuildingBuilding ();
+//			if (newBuilding) {
+//				Transform newBuildingModal = newBuilding.GetBuildingObject ();
+//				BuildingDisplayAttribute newAttr = newBuilding.GetDisplayAttr ();
+//				targetBuilding = newBuilding;
+//				trans_targetBuilding = newBuildingModal;
+//				DisplayBuilding (newAttr, trans_targetBuilding, trans_imageTarget);
+//				MusicPlayer.Insatance.SetAudioClip (targetBuilding.mIntroduceClip);
+//				UICenter.Instance.ResetMusicButtonState ();
+//			} else {
+//				Debug.LogError ("Here is building on index :" + index);
+//			}
 		}
+	}
+
+
+	public Building GetCurrentBuildingBuilding (){
+		return targetBuilding;
 	}
 }

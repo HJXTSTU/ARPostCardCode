@@ -35,7 +35,8 @@ public class UIButtonCommand : MonoBehaviour {
 
 
 	public void OnNaviButtonCommand(){
-		BuildingInfo info = BuildingList.Instance.GetCurrentBuildingBuilding ().GetBuildingInfo();
+		UICenter.Instance.NaviButtonEnable ();
+		BuildingInfo info = Displayer.Instance.GetCurrentBuildingBuilding ().GetBuildingInfo();
 		MapsUtil.PlanWalkRouteInAndroid (info);
 	}
 }

@@ -20,42 +20,65 @@ public class UICenter : MonoBehaviour {
 	}
 
 	public Button mapToggleButton;
+	private Tweener mapToggleButtonTweener = null;
 	public void MapToggleButtonAppear(){
 		if (!mapToggleButton.gameObject.activeInHierarchy)
 			mapToggleButton.gameObject.SetActive (true);
-		mapToggleButton.transform.DOLocalMoveY (300.0f, 0.5f);
+		TryKillTweener (mapToggleButtonTweener);
+		mapToggleButtonTweener = mapToggleButton.transform.DOLocalMoveY (300.0f, 0.5f);
+		mapToggleButtonTweener.onComplete= delegate() {
+			mapToggleButtonTweener=null;
+		};
 	}
 
 	public void MapToogleButtonDisappear(){
-		mapToggleButton.transform.DOLocalMoveY (400.0f, 0.5f).onComplete = delegate() {
+		TryKillTweener (mapToggleButtonTweener);
+		mapToggleButtonTweener = mapToggleButton.transform.DOLocalMoveY (400.0f, 0.5f);
+		mapToggleButtonTweener.onComplete = delegate() {
 			mapToggleButton.gameObject.SetActive(false);
+			mapToggleButtonTweener = null;
 		};
 	}
 
 	public Image map;
+	private Tweener mapTweener = null;
 	public void MapAppear(){
 		if (map.gameObject.activeInHierarchy)
 			return;
-		map.rectTransform.DOLocalMoveY (0, 1f).OnStart(new TweenCallback(delegate{
+		TryKillTweener (mapTweener);
+		mapTweener = map.rectTransform.DOLocalMoveY (0, 1f).OnStart(new TweenCallback(delegate{
 			map.gameObject.SetActive(true);
+			mapTweener=null;
 		}));
 	}
 
 	public void MapDisappear(){
 		if (!map.gameObject.activeInHierarchy)
 			return;
-		map.rectTransform.DOLocalMoveY(700.0f, 1f).onComplete = delegate {
+		TryKillTweener (mapTweener);
+		mapTweener = map.rectTransform.DOLocalMoveY (700.0f, 1f);
+		mapTweener.onComplete = delegate {
 			map.gameObject.SetActive (false);
+			mapTweener=null;
 		};
 	}
 
 	public RectTransform mMusicPanel;
+	private Tweener musicPanelTweener = null;
 	public void MusicPanelAppear(){
-		mMusicPanel.DOLocalRotate (new Vector3 (0, 30, 0), 0.5f);
+		TryKillTweener (musicPanelTweener);
+		musicPanelTweener = mMusicPanel.DOLocalRotate (new Vector3 (0, 30, 0), 0.5f);
+		musicPanelTweener.onComplete= delegate {
+			musicPanelTweener = null;
+		};
 	}
 
 	public void MusicPanelDisappear(){
-		mMusicPanel.DOLocalRotate (new Vector3 (0, 145, 0), 0.5f);
+		TryKillTweener (musicPanelTweener);
+		musicPanelTweener = mMusicPanel.DOLocalRotate (new Vector3 (0, 145, 0), 0.5f);
+		musicPanelTweener.onComplete= delegate {
+			musicPanelTweener = null;
+		};
 	}
 
 
@@ -98,26 +121,41 @@ public class UICenter : MonoBehaviour {
 	public RectTransform specialThanks;
 	public RectTransform exitButton;
 	public RectTransform content;
+	private Tweener exitButtonTweener = null;
 	private void ExitButtonAppear(){
-		exitButton.DOLocalMoveY (300.0f, 0.5f);
+		TryKillTweener (exitButtonTweener);
+		exitButtonTweener = exitButton.DOLocalMoveY (300.0f, 0.5f);
+		exitButtonTweener.onComplete= delegate {
+			exitButtonTweener=null;
+		};
 	}
 
 	private void ExitButtonDisappear(){
-		exitButton.DOLocalMoveY (400.0f, 0.5f);
+		TryKillTweener (exitButtonTweener);
+		exitButtonTweener = exitButton.DOLocalMoveY (400.0f, 0.5f);
+		exitButtonTweener.onComplete= delegate {
+			exitButtonTweener=null;
+		};
 	}
 
+	private Tweener specialThanksTweener = null;
 	public void OnSpecialThanksAppear(){
 		specialThanks.gameObject.SetActive (true);
 		if(MusicPlayer.Insatance.HasAudio()){
 			MusicPanelDisappear();
 			MapToogleButtonDisappear ();
+			NaviButtonDisappear ();
 			if (map.gameObject.activeInHierarchy) {
 				MapDisappear ();
 			}
 		}
 		ExitButtonDisappear();
-		specialThanks.DOScaleY (1, 0.5f).onComplete = delegate(){
+
+		TryKillTweener (specialThanksTweener);
+		specialThanksTweener = specialThanks.DOScaleY (1, 0.5f);
+		specialThanksTweener.onComplete = delegate(){
 				content.DOLocalMoveY (-1.0f, 0);
+				specialThanksTweener=null;
 		};
 	}
 
@@ -125,15 +163,67 @@ public class UICenter : MonoBehaviour {
 		if(MusicPlayer.Insatance.HasAudio()){
 			MusicPanelAppear ();
 			MapToggleButtonAppear ();
+			NaviButtonAppear ();
 			if (map.gameObject.activeInHierarchy) {
 				MapAppear ();
 			}
 		}
 		ExitButtonAppear ();
-
-
-		specialThanks.DOScaleY (0, 0.5f).onComplete = delegate {
-				specialThanks.gameObject.SetActive (false);
+	
+		TryKillTweener (specialThanksTweener);
+		specialThanksTweener = specialThanks.DOScaleY (0, 0.5f);
+		specialThanksTweener.onComplete = delegate {
+			specialThanks.gameObject.SetActive (false);
+			specialThanksTweener = null;
 		};
+	}
+
+	public Button mNaviButton;
+	private Tweener naviButtonTweener = null;
+	public void NaviButtonAppear(){
+		if (!mNaviButton.gameObject.activeInHierarchy)
+			mNaviButton.gameObject.SetActive (true);
+		TryKillTweener (naviButtonTweener);
+		naviButtonTweener = mNaviButton.transform.DOLocalMoveY (300.0f, 0.5f);
+		naviButtonTweener.onComplete= delegate {
+			naviButtonTweener = null;
+		};
+	}
+
+	public void NaviButtonDisappear(){
+		TryKillTweener (naviButtonTweener);
+		naviButtonTweener = mNaviButton.transform.DOLocalMoveY (400.0f, 0.5f);
+		naviButtonTweener.onComplete = delegate() {
+			mNaviButton.gameObject.SetActive(false);
+			naviButtonTweener = null;
+		};
+	}
+
+	public void NaviButtonEnable(){
+		mNaviButton.enabled = true;
+	}
+
+	private void TryKillTweener(Tweener tweener){
+		if (tweener != null) {
+			tweener.Kill (true);
+		}
+	}
+
+
+	public GameObject mask;
+	public Text loadProgress;
+	public void MaskAppear(){
+		mask.SetActive (true);
+	}
+
+	public void MaskDisappear(){
+		mask.SetActive (false);
+	}
+
+	public void SetProgress(float progress){
+		if (mask.activeInHierarchy) {
+			float prog = Mathf.Floor (progress * 10000.0f)/100.0f;
+			loadProgress.text =prog + "%";
+		}
 	}
 }
